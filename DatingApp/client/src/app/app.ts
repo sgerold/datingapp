@@ -2,17 +2,17 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
- import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { Nav } from "./nav/NavComponent";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule, TooltipModule],
+  imports: [RouterOutlet, Nav],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App implements OnInit {
 
-  http = inject(HttpClient)
+  http = inject(HttpClient);
   protected title = 'DatingApp';
   users: any;
 
