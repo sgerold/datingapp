@@ -6,7 +6,7 @@ import { Nav } from "../layout/nav/NavComponent";
 import { AccountService } from '../core/_services/AccountService';
 import { lastValueFrom } from 'rxjs';
 import { User } from '../types/user';
-import { Home } from "./features/home/home";
+import { Home } from "../features/home/home";
 
 @Component({
   selector: 'app-root',
