@@ -1,10 +1,17 @@
 <app-nav></app-nav>
-<div class="container" style="margin-top:100px;">
-  <ul>
-      @for (user of users; track user.id) {
-          <li >
-              {{user.id}} - {{user.userName}}
-          </li>
-      }
+<app-home></app-home>
+
+<!-- <div class="card bg-base-100 w-1/2 mx-auto p-10 mt-24 shadow-xl">
+  <div class="text-3xl text-red-500 font-bold">{{title}}</div>
+
+  <ul class="list">
+    @for (user of this.users(); track user.id) {
+    <li class="list-row items-center">
+      <img src="/user.png" alt="user avitar" class="size-12 rounded-box">
+      <div>
+        {{user.displayName}}
+      </div>
+    </li>
+    }
   </ul>
-</div>
+</div> -->

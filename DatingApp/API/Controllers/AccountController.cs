@@ -15,15 +15,17 @@ public class AccountController(DataContext context, ITokenService tokenService) 
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
-        if (await UserExists(registerDto.UserName))
+        if (await UserExists(registerDto.DisplayName))
             return BadRequest("User name is taken");
 
         using var hmac = new HMACSHA512();
         var user = new AppUser
         {
-            UserName = registerDto.UserName.ToLower(),
+            DisplayName = registerDto.DisplayName.ToLower(),
             PassworHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-            PassworSalt = hmac.Key
+            PassworSalt = hmac.Key,
+            Email = registerDto.Email.ToLower(),
+            ImageUrl = "",
         };
 
         context.Users.Add(user);
@@ -31,7 +33,10 @@ public class AccountController(DataContext context, ITokenService tokenService) 
 
         return new UserDto()
         {
-            UserName = user.UserName,
+            DisplayName = user.DisplayName,
+            Id = user.Id.ToString(),
+            Email = user.Email,
+            ImageUrl = user.ImageUrl,
             Token = tokenService.CreateToken(user)
         };
 
@@ -40,7 +45,7 @@ public class AccountController(DataContext context, ITokenService tokenService) 
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
-        var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.UserName.ToLower());
+        var user = await context.Users.FirstOrDefaultAsync(x => x.Email == loginDto.Email.ToLower());
         if (user == null)
             return Unauthorized("User name not found");
 
@@ -53,13 +58,16 @@ public class AccountController(DataContext context, ITokenService tokenService) 
 
         return new UserDto()
         {
-            UserName = user.UserName,
+            Id = user.Id.ToString(),
+            Email = user.Email,
+            ImageUrl = user.ImageUrl,
+            DisplayName = user.DisplayName,
             Token = tokenService.CreateToken(user)
         };
 
     }
     private async Task<bool> UserExists(string userName)
     {
-        return await context.Users.AnyAsync(x => x.UserName.ToLower() == userName.ToLower());
+        return await context.Users.AnyAsync(x => x.DisplayName.ToLower() == userName.ToLower());
     }
 }

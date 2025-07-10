@@ -1,28 +1,46 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Nav } from "./nav/NavComponent";
+import { Nav } from "../layout/nav/NavComponent";
+import { AccountService } from '../core/_services/AccountService';
+import { lastValueFrom } from 'rxjs';
+import { User } from '../types/user';
+import { Home } from "./features/home/home";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Nav],
+  imports: [Nav, Home],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App implements OnInit {
-
+  private accountService = inject(AccountService);
   http = inject(HttpClient);
   protected title = 'DatingApp';
-  users: any;
+  protected users = signal<User[]>([]);
+ 
 
-  ngOnInit(): void {
-     this.http.get('https://localhost:5001/api/users').subscribe({
-        next: response => this.users = response,
-        error: error => console.log(error),
-        complete: () => console.log('Request has completed')
-        
-     })
+  async ngOnInit() {
+    this.users.set(await this.getMembers());
+    this.setCurrentUser();
+  }
+ 
+  setCurrentUser() {
+    const userString = localStorage.getItem('user');
+    if (!userString)
+      return;
+    const user = JSON.parse(userString);
+    this.accountService.currentUser.set(user);
+  }
+
+  async getMembers() {
+    try {
+      return lastValueFrom(this.http.get<User[]>('https://localhost:5001/api/users'));
+    } catch(error) {
+      console.log(error);
+      throw(error);
+    }
   }
 
 }
