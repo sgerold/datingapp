@@ -1,5 +1,11 @@
 <app-nav></app-nav>
-<app-home></app-home>
+<div 
+  [class.mt-24]="this.router.url !== '/'"
+  [class.container]="this.router.url !== '/'"
+  [class.mx-auto]="this.router.url !== '/'"
+>
+  <router-outlet></router-outlet>
+</div>
 
 <!-- <div class="card bg-base-100 w-1/2 mx-auto p-10 mt-24 shadow-xl">
   <div class="text-3xl text-red-500 font-bold">{{title}}</div>
